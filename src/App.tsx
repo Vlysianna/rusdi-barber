@@ -14,65 +14,15 @@ import BookingManagementNew from "./pages/management/BookingManagement";
 import Login from "./pages/Login";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import Pembayaran from "./pages/pembayaran";
+import UlasanRating from "./pages/ulasan rating";
+import Pelanggan from "./pages/pelanggan";
 
-// Payment Management placeholder
-const PaymentManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Manajemen Pembayaran
-        </h1>
-        <p className="text-gray-600">Kelola pembayaran dan transaksi</p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Pembayaran sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
+// Payment Management is now implemented as Pembayaran component
 
-// Review Management placeholder
-const ReviewManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Manajemen Ulasan & Rating
-        </h1>
-        <p className="text-gray-600">Moderasi ulasan dan kelola rating</p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Ulasan sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
+// Review Management is now implemented as UlasanRating component
 
-// Customer Management placeholder
-const CustomerManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Manajemen Pelanggan
-        </h1>
-        <p className="text-gray-600">
-          Kelola data pelanggan dan riwayat booking
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Pelanggan sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
+// Customer Management is now implemented as Pelanggan component
 
 // Promo Management placeholder
 const PromoManagement: React.FC = () => {
@@ -175,9 +125,9 @@ const AppContent: React.FC = () => {
             <Route path="stylists" element={<StylistManagement />} />
             <Route path="services" element={<ServiceManagement />} />
             <Route path="bookings" element={<BookingManagementNew />} />
-            <Route path="payments" element={<PaymentManagement />} />
-            <Route path="reviews" element={<ReviewManagement />} />
-            <Route path="customers" element={<CustomerManagement />} />
+            <Route path="payments" element={<Pembayaran />} />
+            <Route path="reviews" element={<UlasanRating />} />
+            <Route path="customers" element={<Pelanggan />} />
             <Route path="promos" element={<PromoManagement />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />

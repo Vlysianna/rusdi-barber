@@ -7,10 +7,10 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
 
 class ApiService {
-  private api: AxiosInstance;
+  private axiosInstance: AxiosInstance;
 
   constructor() {
-    this.api = axios.create({
+    this.axiosInstance = axios.create({
       baseURL: API_BASE_URL,
       timeout: 10000,
       headers: {
@@ -23,7 +23,7 @@ class ApiService {
 
   private setupInterceptors(): void {
     // Request interceptor
-    this.api.interceptors.request.use(
+    this.axiosInstance.interceptors.request.use(
       (config) => {
         // Add auth token if available
         const token =
@@ -40,7 +40,7 @@ class ApiService {
     );
 
     // Response interceptor
-    this.api.interceptors.response.use(
+    this.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => {
         return response;
       },
@@ -75,7 +75,7 @@ class ApiService {
     params?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.get(url, { params });
+      const response = await this.axiosInstance.get(url, { params });
       return response.data;
     } catch (error) {
       console.error(`API GET ${url} failed:`, error);
@@ -88,7 +88,7 @@ class ApiService {
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.post(url, data);
+      const response = await this.axiosInstance.post(url, data);
       return response.data;
     } catch (error) {
       console.error(`API POST ${url} failed:`, error);
@@ -101,7 +101,7 @@ class ApiService {
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.put(url, data);
+      const response = await this.axiosInstance.put(url, data);
       return response.data;
     } catch (error) {
       console.error(`API PUT ${url} failed:`, error);
@@ -114,7 +114,7 @@ class ApiService {
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.patch(url, data);
+      const response = await this.axiosInstance.patch(url, data);
       return response.data;
     } catch (error) {
       console.error(`API PATCH ${url} failed:`, error);
@@ -124,7 +124,7 @@ class ApiService {
 
   async delete<T>(url: string): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.delete(url);
+      const response = await this.axiosInstance.delete(url);
       return response.data;
     } catch (error) {
       console.error(`API DELETE ${url} failed:`, error);
@@ -134,7 +134,7 @@ class ApiService {
 
   async upload<T>(url: string, formData: FormData): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.post(url, formData, {
+      const response = await this.axiosInstance.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -152,8 +152,15 @@ class ApiService {
     params?: Record<string, unknown>,
   ): Promise<PaginatedResponse<T>> {
     try {
-      const response = await this.api.get(url, { params });
-      return response.data.data;
+      const response = await this.axiosInstance.get(url, { params });
+      // Transform response to match our PaginatedResponse structure
+      return {
+        data: response.data.data || [],
+        page: response.data.meta?.page || 1,
+        limit: response.data.meta?.limit || 10,
+        total: response.data.meta?.total || 0,
+        totalPages: response.data.meta?.totalPages || 1,
+      };
     } catch (error) {
       console.error(`API GET PAGINATED ${url} failed:`, error);
       throw error;
@@ -162,7 +169,7 @@ class ApiService {
 
   // Expose axios instance for direct access when needed
   get api() {
-    return this.api;
+    return this.axiosInstance;
   }
 }
 
@@ -174,7 +181,14 @@ export { ApiService };
 
 // Error handling utilities
 export const handleApiError = (error: unknown): string => {
-  const err = error as any;
+  const err = error as Error & {
+    response?: {
+      data?: {
+        message?: string;
+        error?: string;
+      };
+    };
+  };
   if (err?.response?.data?.message) {
     return err.response.data.message;
   }
